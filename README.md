@@ -4,7 +4,7 @@ Description
 A simple password manager developed in Node.js, using ESLint for linting, Jest for testing, Docker for containerization and GitHub Actions for CI/CD.
 
 Requirements
-- Node.js v14+
+- Node.js v18+
 - Docker and Docker Compose
 - GitHub account
 
