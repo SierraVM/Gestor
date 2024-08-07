@@ -11,4 +11,4 @@ Requirements
 Installation
 1. Clone the repository:
    https://github.com/SierraVM/Gestor.git
-   cd Gestor
+2. cd Gestor
