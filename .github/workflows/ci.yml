@@ -31,3 +31,10 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/cli@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: test
