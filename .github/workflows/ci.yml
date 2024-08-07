@@ -33,7 +33,7 @@ jobs:
         run: npm test
 
       - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/CLI@master
+        uses: snyk/actions/node@0.5.0
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
