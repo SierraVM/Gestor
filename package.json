@@ -1,11 +1,17 @@
 {
+  "name": "gestor",
+  "version": "1.0.0",
+  "description": "Gestor de contraseñas",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "author": "vida",
+  "license": "ISC",
   "devDependencies": {
     "@eslint/js": "^9.8.0",
     "eslint": "^9.8.0",
-    "globals": "^15.9.0"
+    "jest": "^27.5.1"
   }
-"scripts": {
-  "lint": "eslint ."
-}
-
 }
