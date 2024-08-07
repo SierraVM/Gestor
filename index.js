@@ -1,44 +1,32 @@
-const fs = require('fs');
+const express = require('express');
 const crypto = require('crypto');
 
-// Function to encrypt a password
+const app = express();
+app.use(express.json());
+
+const algorithm = 'aes-256-cbc';
+const key = crypto.randomBytes(32);
+const iv = crypto.randomBytes(16);
+
 function encryptPassword(password) {
-  const algorithm = 'aes-256-ctr';
-  const secretKey = 'my-secret-key';
-  const iv = crypto.randomBytes(16);
-
-  const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
-  const encryptedPassword = Buffer.concat([cipher.update(password), cipher.final()]);
-
-  return iv.toString('hex') + ':' + encryptedPassword.toString('hex');
+    let cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
+    let encrypted = cipher.update(password);
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
+    return `${iv.toString('hex')}:${encrypted.toString('hex')}`;
 }
 
-// Function to decrypt a password
-function decryptPassword(hash) {
-  const [iv, encryptedPassword] = hash.split(':');
-  const algorithm = 'aes-256-ctr';
-  const secretKey = 'my-secret-key';
+app.get('/', (req, res) => {
+    res.send('Welcome to the Password Manager');
+});
 
-  const decipher = crypto.createDecipheriv(algorithm, secretKey, Buffer.from(iv, 'hex'));
-  const decryptedPassword = Buffer.concat([decipher.update(Buffer.from(encryptedPassword, 'hex')), decipher.final()]);
+app.post('/save-password', (req, res) => {
+    const { password } = req.body;
+    const encryptedPassword = encryptPassword(password);
+    res.send({ encryptedPassword });
+});
 
-  return decryptedPassword.toString();
-}
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
 
-// Function to save a password
-function savePassword(name, password) {
-  const encryptedPassword = encryptPassword(password);
-  fs.writeFileSync(`./passwords/${name}.txt`, encryptedPassword);
-  console.log('Password saved!');
-}
-
-// Function to get a password
-function getPassword(name) {
-  const encryptedPassword = fs.readFileSync(`./passwords/${name}.txt`, 'utf8');
-  const decryptedPassword = decryptPassword(encryptedPassword);
-  console.log(`Password for ${name}: ${decryptedPassword}`);
-}
-
-// Example usage
-savePassword('example', 'mypassword');
-getPassword('example');
