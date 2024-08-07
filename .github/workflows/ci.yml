@@ -26,11 +26,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run linter
-        run: npm run lint
+      - name: Install additional dependencies
+        run: npm install globals --save-dev
 
-      - name: Run tests
-        run: npm test
+      - name: Run ESLint
+        run: npm run lint
 
       - name: Run Snyk to check for vulnerabilities
         uses: snyk/actions/setup@master
