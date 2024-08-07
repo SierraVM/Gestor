@@ -29,6 +29,12 @@ jobs:
       - name: Install additional dependencies
         run: npm install globals --save-dev
 
+      - name: Install additional dependencies
+        run: npm install eslint-plugin-jest --save-dev
+
+      - name: Run tests
+        run: npm test
+
       - name: Run ESLint
         run: npm run lint
 
