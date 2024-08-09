@@ -1,32 +1,48 @@
 const express = require('express');
-const crypto = require('crypto');
+const mongoose = require('mongoose');
+const path = require('path');
+
+// Conexión a MongoDB
+mongoose.connect('mongodb://mongo:27017/passwordManager', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+}).then(() => {
+    console.log('Conectado a MongoDB');
+}).catch(err => {
+    console.error('Error de conexión a MongoDB:', err);
+});
+
+// Modelo de Contraseña
+const Password = mongoose.model('Password', new mongoose.Schema({
+    site: String,
+    username: String,
+    password: String,
+}));
 
 const app = express();
 app.use(express.json());
 
-const algorithm = 'aes-256-cbc';
-const key = crypto.randomBytes(32);
-const iv = crypto.randomBytes(16);
+// Servir contenido estático (HTML, CSS)
+app.use(express.static(path.join(__dirname, 'public')));
 
-function encryptPassword(password) {
-    let cipher = crypto.createCipheriv(algorithm, Buffer.from(key), iv);
-    let encrypted = cipher.update(password);
-    encrypted = Buffer.concat([encrypted, cipher.final()]);
-    return `${iv.toString('hex')}:${encrypted.toString('hex')}`;
-}
-
+// Ruta para mostrar el gestor de contraseñas
 app.get('/', (req, res) => {
-    res.send('Welcome to the Password Manager');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.post('/save-password', (req, res) => {
-    const { password } = req.body;
-    const encryptedPassword = encryptPassword(password);
-    res.send({ encryptedPassword });
+// Rutas para la API
+app.post('/passwords', async (req, res) => {
+    const password = new Password(req.body);
+    await password.save();
+    res.send(password);
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.get('/passwords', async (req, res) => {
+    const passwords = await Password.find();
+    res.send(passwords);
+});
+
+app.listen(3000, () => {
+    console.log('Servidor escuchando en el puerto 3000');
 });
 
